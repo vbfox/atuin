@@ -440,6 +440,9 @@ pub struct Settings {
     pub max_preview_height: u16,
     pub show_help: bool,
     pub show_tabs: bool,
+    pub show_command_index: bool,
+    pub show_command_duration: bool,
+    pub show_command_time: bool,
     pub auto_hide_height: u16,
     pub exit_mode: ExitMode,
     pub keymap_mode: KeymapMode,
@@ -723,6 +726,9 @@ impl Settings {
             .set_default("max_preview_height", 4)?
             .set_default("show_help", true)?
             .set_default("show_tabs", true)?
+            .set_default("show_command_index", true)?
+            .set_default("show_command_duration", true)?
+            .set_default("show_command_time", true)?
             .set_default("auto_hide_height", 8)?
             .set_default("invert", false)?
             .set_default("exit_mode", "return-original")?

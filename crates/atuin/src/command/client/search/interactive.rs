@@ -30,7 +30,7 @@ use atuin_client::{
 use super::{
     cursor::Cursor,
     engines::{SearchEngine, SearchState},
-    history_list::{HistoryList, ListState, PREFIX_LENGTH},
+    history_list::{HistoryList, ListDisplayOptions, ListState, PREFIX_LENGTH},
 };
 
 use crate::command::client::theme::{Meaning, Theme};
@@ -730,6 +730,7 @@ impl State {
                     &self.now,
                     indicator.as_str(),
                     theme,
+                    settings.into()
                 );
                 f.render_stateful_widget(results_list, results_list_chunk, &mut self.results_state);
             }
@@ -872,6 +873,7 @@ impl State {
         now: &'a dyn Fn() -> OffsetDateTime,
         indicator: &'a str,
         theme: &'a Theme,
+        display_options: ListDisplayOptions,
     ) -> HistoryList<'a> {
         let results_list = HistoryList::new(
             results,
@@ -880,6 +882,7 @@ impl State {
             now,
             indicator,
             theme,
+            display_options
         );
 
         if style.compact {

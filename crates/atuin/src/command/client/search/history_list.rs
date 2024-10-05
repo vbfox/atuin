@@ -1,8 +1,7 @@
 use std::time::Duration;
 
 use atuin_client::{
-    history::History,
-    theme::{Meaning, Theme},
+    history::History, settings::Settings, theme::{Meaning, Theme}
 };
 use atuin_common::utils::Escapable as _;
 use ratatui::{
@@ -15,6 +14,22 @@ use time::OffsetDateTime;
 
 use super::duration::format_duration;
 
+pub struct ListDisplayOptions {
+    pub show_index: bool,
+    pub show_duration: bool,
+    pub show_time: bool,
+}
+
+impl From<&Settings> for ListDisplayOptions {
+    fn from(settings: &Settings) -> Self {
+        Self {
+            show_index: settings.show_command_index,
+            show_duration: settings.show_command_duration,
+            show_time: settings.show_command_time,
+        }
+    }
+}
+
 pub struct HistoryList<'a> {
     history: &'a [History],
     block: Option<Block<'a>>,
@@ -24,6 +39,7 @@ pub struct HistoryList<'a> {
     now: &'a dyn Fn() -> OffsetDateTime,
     indicator: &'a str,
     theme: &'a Theme,
+    display_options: ListDisplayOptions,
 }
 
 #[derive(Default)]
@@ -80,9 +96,15 @@ impl<'a> StatefulWidget for HistoryList<'a> {
         };
 
         for item in self.history.iter().skip(state.offset).take(end - start) {
-            s.index();
-            s.duration(item);
-            s.time(item);
+            if self.display_options.show_index {
+                s.index();
+            }
+            if self.display_options.show_duration {
+                s.duration(item);
+            }
+            if self.display_options.show_time {
+                s.time(item);
+            }
             s.command(item);
 
             // reset line
@@ -100,6 +122,7 @@ impl<'a> HistoryList<'a> {
         now: &'a dyn Fn() -> OffsetDateTime,
         indicator: &'a str,
         theme: &'a Theme,
+        display_options: ListDisplayOptions,
     ) -> Self {
         Self {
             history,
@@ -109,6 +132,7 @@ impl<'a> HistoryList<'a> {
             now,
             indicator,
             theme,
+            display_options,
         }
     }
 
